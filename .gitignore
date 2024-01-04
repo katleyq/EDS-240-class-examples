@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 
-/week*/data/
+/*/data/
 .Rdata
 .httr-oauth
 .DS_Store
