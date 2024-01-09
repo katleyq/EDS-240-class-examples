@@ -1,6 +1,99 @@
 ---
 title: "eds240-week1"
+date: 2024-01-08
 format: html
 ---
 
-## 
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+library(palmerpenguins)
+```
+
+### Tidy data
+
+```{r}
+# untidy data ----
+temp_data_wide <- tribble(
+  ~date, ~station1, ~station2,  ~station3,
+  "2023-10-01", 30.1, 29.8,  31.2,
+  "2023-11-01", 28.6, 29.1,  33.4,
+  "2023-12-01", 29.9, 28.5,  32.3
+)
+
+# make tidy ----
+temp_data_long <- temp_data_wide |> 
+  pivot_longer(cols = starts_with("station"),
+               names_to = "station_id", 
+               values_to = "temp_c")
+```
+
+### Palmer Penguins
+
+```{r}
+ggplot(penguins, aes(x = body_mass_g,
+                     y = flipper_length_mm,
+                     color = body_mass_g)) +
+  geom_point() +
+  scale_color_gradient(low = "#132B43", high = "#F7DD4C")
+```
+
+```{r}
+ggplot(penguins, aes(x = species)) +
+  geom_bar()
+```
+
+Overriding geom_bar's stat:
+
+```{r}
+penguins_summary <- penguins %>% 
+  count(species) %>% 
+  ggplot(aes(x = species, y = n)) +
+  geom_bar(stat = "identity")
+penguins_summary
+```
+
+```{r}
+ggplot(penguins, aes(x = species, y = after_stat(prop),
+                     group = 1)) +
+  geom_bar()
+```
+
+position adjustments
+
+```{r}
+ggplot(penguins, aes(x = species, fill = island)) +
+  geom_bar(position = position_dodge2(preserve = "single"))
+
+ggplot(penguins, aes(x = species)) +
+  geom_bar() +
+  coord_polar()
+
+ggplot(penguins, aes(x = species)) +
+  geom_bar() +
+  coord_flip()
+```
+
+### Fracking data attempt
+
+```{r}
+fracking <- read_csv(here("week1/data/fracking.csv")) %>% 
+  clean_names()
+```
+
+```{r}
+### tidy fracking data
+fracking_tidy <- fracking %>% 
+  separate(job_start_date, 
+           into = c("job_start_date", "job_start_time"), 
+           sep = c(" ")) %>% 
+  separate(job_end_date,
+           into = c("job_end_date", "job_end_time"),
+           sep = c(" ")) %>% 
+  mutate(operator_name = tolower(operator_name),
+         well_name = tolower(well_name),
+         state_name = tolower(state_name),
+         county_name = tolower(county_name)) %>% 
+  select()
+```
