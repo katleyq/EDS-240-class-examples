@@ -4,6 +4,7 @@
 .Ruserdata
 
 /*/data/
+/*/keys.R
 .Rdata
 .httr-oauth
 .DS_Store
